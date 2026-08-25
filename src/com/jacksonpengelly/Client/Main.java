@@ -11,7 +11,7 @@ import java.util.Scanner;
 import static com.jacksonpengelly.Client.Config.Commands.*;
 
 public class Main {
-    public static void start() {
+    private static void start() {
         try (Socket socket = new Socket(ServerInformation.SERVER_IP, ServerInformation.GENERAL_PORT);
              PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -44,7 +44,6 @@ public class Main {
             listenerThread.start();
 
             // keep main thread running to send messages
-            //noinspection WhileCanBeDoWhile
             while (true) {
                 String userInput = scanner.nextLine();
                 switch (userInput) {
@@ -60,13 +59,13 @@ public class Main {
         }
     }
 
-    public static void help() {
+    private static void help() {
         System.out.println("\t\tHelp Menu");
         System.out.println("Help: /help (shows this menu)");
         System.out.println("Exit: /exit (disconnects you from the server and closes app)");
     }
 
     static void main() {
-        Main.start();
+        start();
     }
 }
