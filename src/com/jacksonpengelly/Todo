@@ -1,6 +1,4 @@
 Setup the Postgresql db
 Add a system where server owners can make join codes for their servers then it will fetch the IP and Port specified from the Postgresql database and connect the user to that server (also could feature a password system)
 Hashing for all important information stored in the database
-Add broadcast system for server
-Account system (hash all passwords in the database)
 Colored usernames
