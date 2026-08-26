@@ -56,8 +56,9 @@ public class Main {
                         case EXIT:
                             System.out.println("Disconnecting from the chatroom.");
                             System.exit(0);
+                            break;
                         default:
-                            // TODO send messages to the server
+                            writer.println(userInput);
                             break;
                     }
                 }
