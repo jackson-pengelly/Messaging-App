@@ -37,7 +37,6 @@ public class Main {
                     if (serverMsg == null) break;
 
                     System.out.println(serverMsg);
-
                     if (serverMsg.contains("Login successful!") || serverMsg.contains("Account created!")) break;
 
                     String answer = scanner.nextLine();

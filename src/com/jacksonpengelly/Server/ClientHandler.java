@@ -8,12 +8,10 @@ import java.net.Socket;
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
-    private PrintWriter output;
-    private BufferedReader clientInput;
-    private String clientIP;
+    private final PrintWriter output;
+    private final BufferedReader clientInput;
+    private final String clientIP;
     private String clientUsername;
-    private boolean muted;
-    private boolean loggedIn;
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
@@ -22,16 +20,54 @@ public class ClientHandler implements Runnable {
         this.clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
-    // getters
-    public String getClientIP() {
-        return this.clientIP;
+    public void sendMessage(String message){
+        output.println(message);
     }
 
-    public String getClientUsername() {
-        return this.clientUsername;
+    private void broadcast(String message) {
+        for (ClientHandler client : Main.activeClients) {
+            if (client != this) {
+                client.sendMessage(message);
+            }
+        }
     }
 
     @Override
     public void run() {
+        try {
+            output.println("(Server): Please enter your username to join the chat: ");
+            this.clientUsername = clientInput.readLine();
+            if (this.clientUsername == null || this.clientUsername.trim().isEmpty()) {
+                this.clientUsername = "Anonymous_" + clientSocket.getPort();
+            }
+
+            output.println("(Server): Connection successful! You are now in the chatroom.");
+            broadcast("(Server): " + clientUsername + " has joined the room.");
+            System.out.println(clientUsername + " joined from IP: " + clientIP);
+
+            String clientMessage;
+            while ((clientMessage = clientInput.readLine()) != null) {
+                broadcast("(" + clientUsername + "): " + clientMessage);
+            }
+        } catch (IOException e) {
+            System.out.println(clientUsername + " left the server.");
+        } finally {
+            cleanup();
+        }
+    }
+
+    private void cleanup() {
+        Main.activeClients.remove(this);
+        if (clientUsername != null) {
+            broadcast("(Server): " + clientUsername + " has disconnected.");
+        }
+
+        try {
+            if (clientInput != null) clientInput.close();
+            if (output != null) output.close();
+            if (clientSocket != null) clientSocket.close();
+        } catch (IOException e) {
+            System.err.println("Error closing resources: " + e.getMessage());
+        }
     }
 }
