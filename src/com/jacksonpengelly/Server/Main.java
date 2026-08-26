@@ -3,7 +3,9 @@ package com.jacksonpengelly.Server;
 import com.jacksonpengelly.SharedConfig.ServerInformation;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Scanner;
 
 import static com.jacksonpengelly.Server.Config.Commands.*;
@@ -35,6 +37,15 @@ public class Main {
                }
             });
             listenerThread.start();
+
+            while (true) {
+                Socket client = serverSocket.accept();
+                String incomingIP = client.getInetAddress().getHostAddress(); // get incoming ip
+                System.out.println("New user connected. IP: " + incomingIP);
+
+                PrintWriter tempOut = new PrintWriter(client.getOutputStream(), true);
+                tempOut.println("(Server): Enter your username (this will show for everyone in the room): ");
+            }
         } catch (IOException e) {
             System.err.println("Server Error: " + e.getMessage());
         }

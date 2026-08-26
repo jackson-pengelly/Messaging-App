@@ -3,3 +3,4 @@ Add a system where server owners can make join codes for their servers then it w
 Hashing for all important information stored in the database
 Add broadcast system for server
 Account system (hash all passwords in the database)
+Colored usernames
