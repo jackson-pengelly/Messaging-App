@@ -35,8 +35,7 @@ public class Main {
                }
             });
             listenerThread.start();
-            listenerThread.join();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             System.err.println("Server Error: " + e.getMessage());
         }
     }
