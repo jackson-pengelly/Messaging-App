@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Random;
+
+import static com.jacksonpengelly.Server.Config.Colors.*;
 
 public class ClientHandler implements Runnable {
     private final Socket clientSocket;
@@ -12,13 +15,15 @@ public class ClientHandler implements Runnable {
     private final BufferedReader clientInput;
     private final String clientIP;
     private String clientUsername;
-    private String usernameColor;
+    private final String usernameColor;
+    private final Random random = new Random();
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
         this.clientIP = clientSocket.getInetAddress().getHostAddress();
         this.output = new PrintWriter(socket.getOutputStream(), true);
         this.clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.usernameColor = COLORS[random.nextInt(COLORS.length)];
     }
 
     public void sendMessage(String message){
@@ -48,7 +53,7 @@ public class ClientHandler implements Runnable {
 
             String clientMessage;
             while ((clientMessage = clientInput.readLine()) != null) {
-                broadcast("(" + clientUsername + "): " + clientMessage);
+                broadcast(usernameColor + "(" + clientUsername + "): " + RESET + clientMessage);
             }
         } catch (IOException e) {
             System.out.println(clientUsername + " left the server.");
