@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static com.jacksonpengelly.Server.Config.Commands.*;
 
 public class Main {
-    private static final boolean DEVELOPMENT_MODE = true;
+    private static final boolean DEVELOPMENT_MODE = false;
 
     public static final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
 
