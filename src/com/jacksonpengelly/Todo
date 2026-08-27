@@ -1,5 +1,4 @@
 Hashing for all important information stored in the database (ill do a small test program to figure out hashing)
-Setup the Postgresql db
 Add a system where server owners can make join codes for their servers then it will fetch the IP and Port specified from the Postgresql database and connect the user to that server (also could feature a password system)
 
 Eventually fork this over into a different project with one general chat room and let users create accounts and private message each other.
