@@ -16,14 +16,21 @@ public class ClientHandler implements Runnable {
     private final String clientIP;
     private String clientUsername;
     private final String usernameColor;
-    private final Random random = new Random();
+    private boolean shouldBroadcastTo;
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
         this.clientIP = clientSocket.getInetAddress().getHostAddress();
         this.output = new PrintWriter(socket.getOutputStream(), true);
         this.clientInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.shouldBroadcastTo = false;
+
+        Random random = new Random();
         this.usernameColor = COLORS[random.nextInt(COLORS.length)];
+    }
+
+    public boolean shouldBroadcastTo() {
+        return shouldBroadcastTo;
     }
 
     public void sendMessage(String message){
@@ -32,7 +39,7 @@ public class ClientHandler implements Runnable {
 
     private void broadcast(String message) {
         for (ClientHandler client : Main.activeClients) {
-            if (client != this) {
+            if (client != this && client.shouldBroadcastTo()) {
                 client.sendMessage(message);
             }
         }
@@ -47,6 +54,7 @@ public class ClientHandler implements Runnable {
                 this.clientUsername = "Anonymous_" + clientSocket.getPort();
             }
 
+            shouldBroadcastTo = true;
             output.println("(Server): Connection successful! You are now in the chatroom.");
             broadcast("(Server): " + clientUsername + " has joined the room.");
             System.out.println(clientUsername + " joined from IP: " + clientIP);

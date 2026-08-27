@@ -30,7 +30,7 @@ public class Main {
                    // check for commands
                    switch (input) {
                        case SHUTDOWN:
-                           broadcast("(Server): Server is shutting down in 3 seconds...");
+                           serverBroadcast("(Server): Server is shutting down in 3 seconds...");
                            try {
                                Thread.sleep(3);
                            } catch (InterruptedException e) {
@@ -42,7 +42,7 @@ public class Main {
                            help();
                            break;
                        default:
-                           broadcast("(Server): " + input);
+                           serverBroadcast("(Server): " + input);
                            break;
                    }
                }
@@ -92,7 +92,7 @@ public class Main {
         System.out.println("/help | Displays this menu.");
     }
 
-    private static void broadcast(String message) {
+    private static void serverBroadcast(String message) {
         for (ClientHandler client : activeClients) {
             client.sendMessage(message);
         }
