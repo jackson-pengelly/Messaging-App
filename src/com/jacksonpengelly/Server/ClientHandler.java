@@ -12,6 +12,7 @@ public class ClientHandler implements Runnable {
     private final BufferedReader clientInput;
     private final String clientIP;
     private String clientUsername;
+    private String usernameColor;
 
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
