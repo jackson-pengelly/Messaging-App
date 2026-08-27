@@ -20,30 +20,18 @@ public class Main {
             try (Socket socket = new Socket(IP, ServerInformation.GENERAL_PORT);
                  PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
                  BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
                 // start thread to listen to the server
                 Thread listenerThread = new Thread(() -> {
                     try {
-                        String messageFromServer;
-                        while ((messageFromServer = reader.readLine()) != null) {
-                            System.out.println(messageFromServer);
+                        String serverMsg;
+                        while ((serverMsg = reader.readLine()) != null) {
+                            System.out.println(serverMsg);
                         }
                     } catch (IOException e) {
                         System.out.println("Connection lost");
                     }
                 });
-
-                while (true) {
-                    String serverMsg = reader.readLine();
-                    if (serverMsg == null) break;
-
-                    System.out.println(serverMsg);
-                    if (serverMsg.contains("Login successful!") || serverMsg.contains("Account created!")) break;
-
-                    String answer = scanner.nextLine();
-                    writer.println(answer);
-                }
-
-                // start thread after getting username
                 listenerThread.start();
 
                 // keep main thread running to send messages
