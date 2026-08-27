@@ -33,15 +33,15 @@ public class ServerManager {
     }
 
     // creates a server in the servers table
-    public static void createServer(String name, String plainTextPassword) {
+    public static void createServer(String name, String password) {
         String sql = "INSERT INTO servers (server_name, is_public, password_hash) VALUES (?, ?, ?)";
 
-        boolean isPublic = (plainTextPassword == null || plainTextPassword.trim().isEmpty());
-        String finalHash = null;
+        boolean isPublic = (password == null || password.trim().isEmpty());
+        String finalHash = PasswordManagement.hashPassword(password);
 
         // if server is private hash password with bcrypt
         if (!isPublic) {
-            finalHash = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+            finalHash = BCrypt.hashpw(password, BCrypt.gensalt());
         }
 
         try (Connection conn = getConnection();
