@@ -1,0 +1,4 @@
+# rename this file to config.properties and fill in your PostgreSQL details
+db.url=jdbc:postgresql://localhost:5432/messaging_app_db
+db.user=YOUR_USERNAME
+db.password=YOUR_PASSWORD

@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS servers (
+    id SERIAL PRIMARY KEY,
+    server_name VARCHAR(100) NOT NULL,
+    is_public BOOLEAN NOT NULL DEFAULT TRUE,
+    password_hash CHAR(60) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
