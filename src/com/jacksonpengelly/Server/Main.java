@@ -18,49 +18,52 @@ public class Main {
     public static final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
 
     private static void start() {
-        try (ServerSocket serverSocket = new ServerSocket(ServerInformation.GENERAL_PORT);
-             Scanner scanner = new Scanner(System.in)) {
-            System.out.println("Server started successfully; IP: " + getServerIP() + "; listening on port: " + ServerInformation.GENERAL_PORT);
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Server name: ");
+            String serverName = scanner.nextLine();
+            try (ServerSocket serverSocket = new ServerSocket(ServerInformation.GENERAL_PORT)) {
+                System.out.println("Server started successfully; IP: " + getServerIP() + "; listening on port: " + ServerInformation.GENERAL_PORT);
 
-            // main thread to listen for messages sent on server
-            Thread listenerThread = new Thread(() -> {
-               while (true) {
-                   String input = scanner.nextLine();
+                // main thread to listen for messages sent on server
+                Thread listenerThread = new Thread(() -> {
+                    while (true) {
+                        String input = scanner.nextLine();
 
-                   // check for commands
-                   switch (input) {
-                       case SHUTDOWN:
-                           serverBroadcast("(Server): Server is shutting down in 3 seconds...");
-                           try {
-                               Thread.sleep(3);
-                           } catch (InterruptedException e) {
-                               System.err.println(e.getMessage());
-                           }
-                           System.exit(0);
-                           break;
-                       case HELP:
-                           help();
-                           break;
-                       default:
-                           serverBroadcast("(Server): " + input);
-                           break;
-                   }
-               }
-            });
-            listenerThread.start();
+                        // check for commands
+                        switch (input) {
+                            case SHUTDOWN:
+                                serverBroadcast("(Server): Server is shutting down in 3 seconds...");
+                                try {
+                                    Thread.sleep(3);
+                                } catch (InterruptedException e) {
+                                    System.err.println(e.getMessage());
+                                }
+                                System.exit(0);
+                                break;
+                            case HELP:
+                                help();
+                                break;
+                            default:
+                                serverBroadcast("(Server): " + input);
+                                break;
+                        }
+                    }
+                });
+                listenerThread.start();
 
-            while (true) {
-                Socket client = serverSocket.accept();
-                try {
-                    ClientHandler handler = new ClientHandler(client);
-                    activeClients.add(handler);
-                    new Thread(handler).start();
-                } catch (IOException e) {
-                    System.err.println("Failed to initialize client:" + e.getMessage());
+                while (true) {
+                    Socket client = serverSocket.accept();
+                    try {
+                        ClientHandler handler = new ClientHandler(client);
+                        activeClients.add(handler);
+                        new Thread(handler).start();
+                    } catch (IOException e) {
+                        System.err.println("Failed to initialize client:" + e.getMessage());
+                    }
                 }
+            } catch (IOException e) {
+                System.err.println("Server Error: " + e.getMessage());
             }
-        } catch (IOException e) {
-            System.err.println("Server Error: " + e.getMessage());
         }
     }
 
@@ -98,7 +101,7 @@ public class Main {
         }
     }
 
-    static void main() {
+    public static void main(String[] args) {
         start();
     }
 }

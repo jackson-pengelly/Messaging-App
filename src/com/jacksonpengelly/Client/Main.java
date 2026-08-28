@@ -61,7 +61,7 @@ public class Main {
         System.out.println("/help | Displays this help menu.");
     }
 
-    static void main() {
+    public static void main(String[] args) {
         start();
     }
 }
