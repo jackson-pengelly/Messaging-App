@@ -1,65 +1,23 @@
 package com.jacksonpengelly.Server.Database;
 
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Properties;
+import com.jacksonpengelly.Server.DAOs.ServerDAO;
+import com.jacksonpengelly.Server.Objects.Server;
 
 public class ServerManager {
-    private static final Properties properties = new Properties();
+    private static final ServerDAO serverDAO = new ServerDAO();
 
-    // static block to run once on class load
-    static {
-        try (FileInputStream fis = new FileInputStream("config.properties")) {
-            properties.load(fis);
-        } catch (IOException e) {
-            System.err.println("Could not load config.properties file.");
-            System.err.println(e.getMessage());
+    public static void requestNewServerCreation(String name, String ip, String password) {
+        if (serverDAO.existsByName(name)) {
+            System.out.println("Creation failed: A server named '" + name + "' already exists.");
+            return;
         }
-    }
-
-    // connects to database using credentials from config.properties
-    private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                properties.getProperty("db.url"),
-                properties.getProperty("db.user"),
-                properties.getProperty("db.password")
-        );
-    }
-
-    // creates a server in the servers table
-    public static void createServer(String name, String password) {
-        String sql = "INSERT INTO servers (server_name, is_public, password_hash) VALUES (?, ?, ?)";
 
         boolean isPublic = (password == null || password.trim().isEmpty());
-        String finalHash = PasswordManagement.hashPassword(password);
+        String hashedPassword = PasswordManagement.hashPassword(password);
 
-        // if server is private hash password with bcrypt
-        if (!isPublic) {
-            finalHash = BCrypt.hashpw(password, BCrypt.gensalt());
-        }
+        Server server = new Server(name, ip, isPublic, hashedPassword);
 
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, name);
-            pstmt.setBoolean(2, isPublic);
-
-            if (finalHash != null) {
-                pstmt.setString(3, finalHash);
-            } else {
-                pstmt.setNull(3, java.sql.Types.CHAR);
-            }
-
-            pstmt.executeUpdate();
-            System.out.println("Successfully saved server: " + name);
-        } catch (SQLException e) {
-            System.err.println("Error saving server to database.");
-            System.err.println(e.getMessage());
-        }
+        serverDAO.createServer(server);
+        System.out.println("Server created.");
     }
 }
